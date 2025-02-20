@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,9 @@
     <!-- Fontes e Ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Biblioteca QuaggaJS para leitura de códigos de barras -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
 
     <style>
         * {
@@ -341,6 +344,31 @@
             opacity: 0.8;
         }
 
+        /* Estilos para o scanner de código de barras */
+        #scanner-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 1000;
+        }
+
+        #scanner-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #scanner-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem;
@@ -424,6 +452,15 @@
                 <span class="material-icons">search</span>
                 Consultar
             </button>
+            <button id="scanButton" style="display: none;" onclick="startBarcodeScanner()">
+                <span class="material-icons">camera_alt</span>
+                Escanear
+            </button>
+        </div>
+
+        <div id="scanner-container" style="display: none;">
+            <video id="scanner-video" autoplay playsinline></video>
+            <canvas id="scanner-canvas"></canvas>
         </div>
 
         <div id="randomResults"></div>
@@ -451,7 +488,6 @@
     </div>
 
     <script>
-        // JavaScript permanece exatamente igual à versão anterior
         let products = [];
         let priceHistory = JSON.parse(localStorage.getItem('priceHistory')) || {};
         let inactivityTimer;
@@ -659,6 +695,53 @@
         }
         setInterval(checkForFileUpdate, 30000);
 
+        // Função para verificar se é um dispositivo móvel
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Função para iniciar o scanner de código de barras
+        function startBarcodeScanner() {
+            const scannerContainer = document.getElementById('scanner-container');
+            scannerContainer.style.display = 'block';
+
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner-video'),
+                    constraints: {
+                        facingMode: "environment" // Usa a câmera traseira
+                    }
+                },
+                decoder: {
+                    readers: ["ean_reader", "ean_8_reader", "code_128_reader"] // Tipos de códigos suportados
+                }
+            }, function(err) {
+                if (err) {
+                    console.error(err);
+                    alert("Erro ao iniciar o scanner: " + err);
+                    scannerContainer.style.display = 'none';
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(result) {
+                const code = result.codeResult.code;
+                Quagga.stop();
+                scannerContainer.style.display = 'none';
+                searchProductByCode(code);
+            });
+        }
+
+        // Função para buscar o produto pelo código lido
+        function searchProductByCode(code) {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = code;
+            searchProduct();
+        }
+
         document.addEventListener('mousemove', resetInactivityTimer);
         document.addEventListener('keydown', resetInactivityTimer);
         document.addEventListener('click', resetInactivityTimer);
@@ -668,7 +751,14 @@
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') searchProduct();
         });
-        window.onload = loadProducts;
+
+        // Carregar produtos e configurar o botão de escanear ao iniciar
+        window.onload = function() {
+            loadProducts();
+            if (isMobileDevice()) {
+                document.getElementById('scanButton').style.display = 'block';
+            }
+        };
     </script>
 </body>
 </html>
