@@ -711,27 +711,62 @@
                     type: "LiveStream",
                     target: document.querySelector('#scanner-video'),
                     constraints: {
-                        facingMode: "environment" // Usa a câmera traseira
+                        facingMode: "environment", // Usa a câmera traseira
+                        width: { min: 640 },
+                        height: { min: 480 }
                     }
                 },
+                locator: {
+                    patchSize: "medium",
+                    halfSample: true
+                },
+                numOfWorkers: 4,
+                frequency: 10,
                 decoder: {
-                    readers: ["ean_reader", "ean_8_reader", "code_128_reader"] // Tipos de códigos suportados
-                }
+                    readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader"]
+                },
+                locate: true
             }, function(err) {
                 if (err) {
-                    console.error(err);
-                    alert("Erro ao iniciar o scanner: " + err);
+                    console.error("Erro ao inicializar Quagga:", err);
+                    alert("Erro ao iniciar o scanner: " + err.message);
                     scannerContainer.style.display = 'none';
                     return;
                 }
+                console.log("Quagga inicializado com sucesso");
                 Quagga.start();
             });
 
             Quagga.onDetected(function(result) {
                 const code = result.codeResult.code;
+                console.log("Código de barras detectado:", code);
                 Quagga.stop();
                 scannerContainer.style.display = 'none';
                 searchProductByCode(code);
+            });
+
+            Quagga.onProcessed(function(result) {
+                const drawingCtx = Quagga.canvas.ctx.overlay;
+                const drawingCanvas = Quagga.canvas.dom.overlay;
+
+                drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+                if (result) {
+                    if (result.boxes) {
+                        drawingCtx.strokeStyle = "green";
+                        result.boxes.filter(box => box !== result.box).forEach(box => {
+                            Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
+                        });
+                    }
+
+                    if (result.box) {
+                        Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00F", lineWidth: 2});
+                    }
+
+                    if (result.codeResult && result.codeResult.code) {
+                        Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
+                    }
+                }
             });
         }
 
