@@ -353,6 +353,10 @@
             height: 100%;
             background: black;
             z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         #scanner-video {
@@ -367,6 +371,16 @@
             left: 0;
             width: 100%;
             height: 100%;
+        }
+
+        #close-scanner {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff4444;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            z-index: 1001;
         }
 
         @media (max-width: 768px) {
@@ -461,6 +475,10 @@
         <div id="scanner-container" style="display: none;">
             <video id="scanner-video" autoplay playsinline></video>
             <canvas id="scanner-canvas"></canvas>
+            <button id="close-scanner" onclick="stopBarcodeScanner()">
+                <span class="material-icons">close</span>
+                Fechar
+            </button>
         </div>
 
         <div id="randomResults"></div>
@@ -703,7 +721,14 @@
         // Função para iniciar o scanner de código de barras
         function startBarcodeScanner() {
             const scannerContainer = document.getElementById('scanner-container');
-            scannerContainer.style.display = 'block';
+            scannerContainer.style.display = 'flex';
+
+            // Verifica se o site está em HTTPS ou localhost (necessário para iOS)
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                alert("O scanner de câmera requer HTTPS. Por favor, acesse o site via HTTPS.");
+                scannerContainer.style.display = 'none';
+                return;
+            }
 
             Quagga.init({
                 inputStream: {
@@ -711,17 +736,14 @@
                     type: "LiveStream",
                     target: document.querySelector('#scanner-video'),
                     constraints: {
-                        facingMode: "environment", // Usa a câmera traseira
-                        width: { min: 640 },
-                        height: { min: 480 }
+                        facingMode: "environment" // Usa a câmera traseira
                     }
                 },
                 locator: {
                     patchSize: "medium",
                     halfSample: true
                 },
-                numOfWorkers: 4,
-                frequency: 10,
+                numOfWorkers: navigator.hardwareConcurrency || 4,
                 decoder: {
                     readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader"]
                 },
@@ -768,6 +790,12 @@
                     }
                 }
             });
+        }
+
+        // Função para parar o scanner manualmente
+        function stopBarcodeScanner() {
+            Quagga.stop();
+            document.getElementById('scanner-container').style.display = 'none';
         }
 
         // Função para buscar o produto pelo código lido
