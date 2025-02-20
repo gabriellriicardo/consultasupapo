@@ -17,8 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <!-- Biblioteca QuaggaJS para leitura de códigos de barras -->
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <!-- Biblioteca de Leitura de Código de Barras -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
     <style>
         * {
@@ -344,43 +344,53 @@
             opacity: 0.8;
         }
 
-        /* Estilos para o scanner de código de barras */
-        #scanner-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        /* Leitor de Código de Barras */
+        #barcodeScanner {
+            margin: 1.5rem 0;
+            display: none;
         }
 
-        #scanner-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .scanner-ui {
+            text-align: center;
+            padding: 1rem;
+            background: #f0f4f8;
+            border-radius: 12px;
         }
 
-        #scanner-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
+        #interactive {
             width: 100%;
-            height: 100%;
-        }
-
-        #close-scanner {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff4444;
-            padding: 0.5rem 1rem;
+            max-width: 400px;
+            height: 300px;
+            background: #000;
+            margin: 1rem auto;
             border-radius: 8px;
-            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .scan-button, .stop-button {
+            padding: 0.8rem 1.5rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .scan-button {
+            background: #2196F3;
+            color: white;
+        }
+
+        .stop-button {
+            background: #f44336;
+            color: white;
+        }
+
+        .scan-button:hover, .stop-button:hover {
+            transform: translateY(-2px);
         }
 
         @media (max-width: 768px) {
@@ -434,6 +444,10 @@
                 font-size: 0.8rem;
                 margin: 1rem 0;
             }
+
+            #interactive {
+                height: 250px;
+            }
         }
     </style>
 </head>
@@ -460,24 +474,26 @@
         <div id="currentTime" class="current-time">🕒 Carregando hora...</div>
         <div id="weather" class="weather-info">⛅ Carregando previsão do tempo...</div>
 
+        <!-- Leitor de Código de Barras (Mobile) -->
+        <div id="barcodeScanner">
+            <div class="scanner-ui">
+                <div id="interactive" class="viewport"></div>
+                <button onclick="startBarcodeScanner()" class="scan-button">
+                    <span class="material-icons">camera</span>
+                    Iniciar Leitor
+                </button>
+                <button onclick="stopBarcodeScanner()" class="stop-button">
+                    <span class="material-icons">cancel</span>
+                    Parar Leitura
+                </button>
+            </div>
+        </div>
+
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Digite o código ou nome do produto..." autofocus>
             <button onclick="searchProduct()">
                 <span class="material-icons">search</span>
                 Consultar
-            </button>
-            <button id="scanButton" style="display: none;" onclick="startBarcodeScanner()">
-                <span class="material-icons">camera_alt</span>
-                Escanear
-            </button>
-        </div>
-
-        <div id="scanner-container" style="display: none;">
-            <video id="scanner-video" autoplay playsinline></video>
-            <canvas id="scanner-canvas"></canvas>
-            <button id="close-scanner" onclick="stopBarcodeScanner()">
-                <span class="material-icons">close</span>
-                Fechar
             </button>
         </div>
 
@@ -506,6 +522,56 @@
     </div>
 
     <script>
+        // Verificar se é dispositivo móvel
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Controle do Leitor de Código de Barras
+        let scannerActive = false;
+
+        function startBarcodeScanner() {
+            if (!scannerActive) {
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        constraints: {
+                            width: 320,
+                            height: 240,
+                            facingMode: "environment"
+                        },
+                        target: document.querySelector('#interactive')
+                    },
+                    decoder: {
+                        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    Quagga.start();
+                    scannerActive = true;
+                });
+
+                Quagga.onDetected(function(result) {
+                    const code = result.codeResult.code;
+                    document.getElementById('searchInput').value = code;
+                    searchProduct();
+                    stopBarcodeScanner();
+                });
+            }
+        }
+
+        function stopBarcodeScanner() {
+            if (scannerActive) {
+                Quagga.stop();
+                scannerActive = false;
+            }
+        }
+
+        // Sistema de Consulta de Preços
         let products = [];
         let priceHistory = JSON.parse(localStorage.getItem('priceHistory')) || {};
         let inactivityTimer;
@@ -713,115 +779,23 @@
         }
         setInterval(checkForFileUpdate, 30000);
 
-        // Função para verificar se é um dispositivo móvel
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // Função para iniciar o scanner de código de barras
-        function startBarcodeScanner() {
-            const scannerContainer = document.getElementById('scanner-container');
-            scannerContainer.style.display = 'flex';
-
-            // Verifica se o site está em HTTPS ou localhost (necessário para iOS)
-            if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-                alert("O scanner de câmera requer HTTPS. Por favor, acesse o site via HTTPS.");
-                scannerContainer.style.display = 'none';
-                return;
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('searchInput').focus();
+            if (isMobile()) {
+                document.getElementById('barcodeScanner').style.display = 'block';
             }
-
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#scanner-video'),
-                    constraints: {
-                        facingMode: "environment" // Usa a câmera traseira
-                    }
-                },
-                locator: {
-                    patchSize: "medium",
-                    halfSample: true
-                },
-                numOfWorkers: navigator.hardwareConcurrency || 4,
-                decoder: {
-                    readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader"]
-                },
-                locate: true
-            }, function(err) {
-                if (err) {
-                    console.error("Erro ao inicializar Quagga:", err);
-                    alert("Erro ao iniciar o scanner: " + err.message);
-                    scannerContainer.style.display = 'none';
-                    return;
-                }
-                console.log("Quagga inicializado com sucesso");
-                Quagga.start();
-            });
-
-            Quagga.onDetected(function(result) {
-                const code = result.codeResult.code;
-                console.log("Código de barras detectado:", code);
-                Quagga.stop();
-                scannerContainer.style.display = 'none';
-                searchProductByCode(code);
-            });
-
-            Quagga.onProcessed(function(result) {
-                const drawingCtx = Quagga.canvas.ctx.overlay;
-                const drawingCanvas = Quagga.canvas.dom.overlay;
-
-                drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-
-                if (result) {
-                    if (result.boxes) {
-                        drawingCtx.strokeStyle = "green";
-                        result.boxes.filter(box => box !== result.box).forEach(box => {
-                            Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
-                        });
-                    }
-
-                    if (result.box) {
-                        Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00F", lineWidth: 2});
-                    }
-
-                    if (result.codeResult && result.codeResult.code) {
-                        Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
-                    }
-                }
-            });
-        }
-
-        // Função para parar o scanner manualmente
-        function stopBarcodeScanner() {
-            Quagga.stop();
-            document.getElementById('scanner-container').style.display = 'none';
-        }
-
-        // Função para buscar o produto pelo código lido
-        function searchProductByCode(code) {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = code;
-            searchProduct();
-        }
+        });
 
         document.addEventListener('mousemove', resetInactivityTimer);
         document.addEventListener('keydown', resetInactivityTimer);
         document.addEventListener('click', resetInactivityTimer);
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('searchInput').focus();
-        });
+        
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') searchProduct();
         });
 
-        // Carregar produtos e configurar o botão de escanear ao iniciar
-        window.onload = function() {
-            loadProducts();
-            if (isMobileDevice()) {
-                document.getElementById('scanButton').style.display = 'block';
-            }
-        };
+        window.onload = loadProducts;
     </script>
 </body>
 </html>
