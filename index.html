@@ -1,504 +1,677 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultor de Preços - Mercadinho Supapo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultor de Preços - Mercadinho Supapo</title>
 
-    <!-- Configurações do Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
-    <link rel="shortcut icon" href="favicon.ico">
-    <meta name="theme-color" content="#ffffff">
+  <!-- Configurações do Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="shortcut icon" href="favicon.ico">
+  <meta name="theme-color" content="#ffffff">
 
-    <!-- Fontes e Ícones -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Fontes e Ícones -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <!-- QuaggaJS -->
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      width: 100%;
+      max-width: 800px;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
+    /* Cabeçalho */
+    .header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
 
-        .logo {
-            width: 60px;
-            height: 60px;
-            margin-right: 10px;
-        }
+    .branding {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
 
-        .title-container h1 {
-            font-size: 24px;
-            margin: 0;
-            color: #333;
-            display: flex;
-            align-items: center;
-        }
+    .logo {
+      height: 80px;
+      width: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-        .title-container .subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
+    .title-container {
+      flex: 1;
+      max-width: 400px;
+    }
 
-        .update-info, .current-time, .weather-info {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-            text-align: center;
-        }
+    h1 {
+      color: #2d3748;
+      font-size: 2.2rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
 
-        .update-recent { color: #28a745; }
-        .update-medium { color: #ffc107; }
-        .update-old { color: #dc3545; }
+    .subtitle {
+      color: #4a5568;
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+    }
 
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+    h1::after {
+      content: "";
+      width: 60px;
+      height: 4px;
+      background: #4a5568;
+      display: block;
+      position: absolute;
+      bottom: -10px;
+      border-radius: 2px;
+    }
 
-        .search-box input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+    .update-info {
+      text-align: center;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
 
-        .search-box button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+    .update-info span {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      animation: pulse 2s infinite;
+    }
 
-        .search-box button:hover {
-            background-color: #0056b3;
-        }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
 
-        #scanButton {
-            background-color: #28a745;
-        }
+    .update-recent {
+      background: #f0fff4;
+      border-color: #38a169;
+      color: #2f855a;
+      animation: pulse-green 2s infinite;
+    }
 
-        #scanButton:hover {
-            background-color: #218838;
-        }
+    .update-medium {
+      background: #fff9e6;
+      border-color: #ecc94b;
+      color: #b7791f;
+      animation: pulse-yellow 2s infinite;
+    }
 
-        .result {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            display: none;
-        }
+    .update-old {
+      background: #fff5f5;
+      border-color: #fc8181;
+      color: #c53030;
+      animation: pulse-red 2s infinite;
+    }
 
-        .random-product {
-            background-color: #e9ecef;
-        }
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.3); }
+      70% { box-shadow: 0 0 0 10px rgba(56, 161, 105, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); }
+    }
 
-        .product-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
+    @keyframes pulse-yellow {
+      0% { box-shadow: 0 0 0 0 rgba(236, 201, 75, 0.3); }
+      70% { box-shadow: 0 0 0 10px rgba(236, 201, 75, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(236, 201, 75, 0); }
+    }
 
-        .price-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(252, 129, 129, 0.3); }
+      70% { box-shadow: 0 0 0 10px rgba(252, 129, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(252, 129, 129, 0); }
+    }
 
-        .price {
-            font-size: 24px;
-            color: #28a745;
-        }
+    .search-box {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-        .price .unit {
-            font-size: 14px;
-            color: #666;
-            margin-left: 5px;
-        }
+    input[type="text"] {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f7fafc;
+    }
 
-        .price-history {
-            font-size: 14px;
-            color: #666;
-        }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
 
-        .price-reduction .old-price {
-            text-decoration: line-through;
-            color: #dc3545;
-            margin-right: 10px;
-        }
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-        .loading, .error {
-            text-align: center;
-            font-size: 16px;
-            color: #666;
-            display: none;
-        }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
 
-        .error {
-            color: #c53030;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
+    .result {
+      text-align: center;
+      padding: 3rem;
+      background: #f7fafc;
+      border-radius: 15px;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.5s ease;
+      position: relative;
+    }
 
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            margin-top: 20px;
-        }
+    .random-product {
+      animation: slideIn 1s ease;
+    }
 
-        .footer-logo {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 5px;
-        }
-    </style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .price-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .price {
+      font-size: 6.5rem;
+      color: #2f855a;
+      font-weight: 700;
+      margin: 2rem 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      padding-bottom: 3rem;
+    }
+
+    .price::before {
+      content: "R$";
+      font-size: 2rem;
+      color: #718096;
+      position: absolute;
+      left: -3.5rem;
+      top: 1.5rem;
+    }
+
+    .unit {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      font-size: 1.2rem;
+      color: #718096;
+      font-weight: 400;
+    }
+
+    .price-history {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: #4a5568;
+    }
+
+    .old-price {
+      text-decoration: line-through;
+      color: #e74c3c;
+      margin-right: 0.5rem;
+    }
+
+    .price-reduction {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      color: #2ecc71;
+    }
+
+    .error {
+      color: #c53030;
+      text-align: center;
+      margin-top: 1.5rem;
+      display: none;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .loading {
+      text-align: center;
+      margin: 2rem 0;
+      color: #4a5568;
+    }
+
+    .material-icons {
+      vertical-align: middle;
+    }
+
+    .product-title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2d3748;
+    }
+
+    .current-time {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #2d3748;
+    }
+
+    .weather-info {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: #2d3748;
+    }
+
+    /* Rodapé */
+    .footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid #e2e8f0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #718096;
+    }
+
+    .footer-logo {
+      height: 40px;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      .branding {
+        flex-direction: column;
+      }
+
+      .logo {
+        height: 60px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      button {
+        justify-content: center;
+      }
+
+      .price {
+        font-size: 4rem;
+        padding-bottom: 2rem;
+      }
+
+      .price::before {
+        left: -2rem;
+        top: 0.8rem;
+        font-size: 1.5rem;
+      }
+
+      .unit {
+        font-size: 1rem;
+        right: 0.5rem;
+        bottom: 0.5rem;
+      }
+
+      .update-info {
+        font-size: 0.8rem;
+        margin: 1rem 0;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Cabeçalho -->
-        <header class="header">
-            <div class="branding">
-                <img src="logo.png" alt="Mercadinho Supapo" class="logo">
-                <div class="title-container">
-                    <h1>
-                        <span class="material-icons">search</span>
-                        Consultor de Preços
-                    </h1>
-                    <div class="subtitle">Mercadinho Supapo</div>
-                </div>
-            </div>
-        </header>
-
-        <div class="update-info" id="lastUpdate">
-            <span>Última atualização: Carregando...</span>
+  <div class="container">
+    <!-- Cabeçalho -->
+    <header class="header">
+      <div class="branding">
+        <img src="logo.png" alt="Mercadinho Supapo" class="logo">
+        <div class="title-container">
+          <h1>
+            <span class="material-icons">search</span>
+            Consultor de Preços
+          </h1>
+          <div class="subtitle">Mercadinho Supapo</div>
         </div>
+      </div>
+    </header>
 
-        <div id="currentTime" class="current-time">🕒 Carregando hora...</div>
-        <div id="weather" class="weather-info">⛅ Carregando previsão do tempo...</div>
-
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Digite o código ou nome do produto..." autofocus>
-            <button onclick="searchProduct()">
-                <span class="material-icons">search</span>
-                Consultar
-            </button>
-            <button id="scanButton" style="display: none;">Ler Código de Barras</button>
-        </div>
-
-        <div id="result"></div>
-
-        <div id="randomResults"></div>
-
-        <div class="result" id="result" style="display:none;">
-            <div class="product-title" id="productName"></div>
-            <div class="price-container">
-                <div class="price" id="productPrice">
-                    <span class="unit" id="productUnit"></span>
-                </div>
-                <div class="price-history" id="priceHistory"></div>
-            </div>
-        </div>
-        <div class="loading" id="loading">Carregando produtos...</div>
-        <div class="error" id="error">
-            <span class="material-icons">error_outline</span>
-            Produto não encontrado!
-        </div>
-
-        <!-- Rodapé -->
-        <footer class="footer">
-            <img src="logo.png" alt="Mercadinho Supapo" class="footer-logo">
-            <p>Sistema desenvolvido por Gabriel Ricardo - 2025</p>
-        </footer>
+    <div class="update-info" id="lastUpdate">
+      <span>Última atualização: Carregando...</span>
     </div>
 
-    <script>
-        let products = [];
-        let priceHistory = JSON.parse(localStorage.getItem('priceHistory')) || {};
-        let inactivityTimer;
-        let lastFileModified = null;
+    <div id="currentTime" class="current-time">🕒 Carregando hora...</div>
+    <div id="weather" class="weather-info">⛅ Carregando previsão do tempo...</div>
 
-        function updateCurrentTime() {
-            const now = new Date();
-            const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            const formattedTime = new Intl.DateTimeFormat('pt-BR', options).format(now);
-            document.getElementById('currentTime').textContent = `🕒 Hoje: ${formattedTime}`;
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Digite o código ou nome do produto..." autofocus>
+      <button onclick="searchProduct()">
+        <span class="material-icons">search</span>
+        Consultar
+      </button>
+    </div>
+
+    <div id="randomResults"></div>
+
+    <div class="result" id="result" style="display:none;">
+      <div class="product-title" id="productName"></div>
+      <div class="price-container">
+        <div class="price" id="productPrice">
+          <span class="unit" id="productUnit"></span>
+        </div>
+        <div class="price-history" id="priceHistory"></div>
+      </div>
+    </div>
+    <div class="loading" id="loading">Carregando produtos...</div>
+    <div class="error" id="error">
+      <span class="material-icons">error_outline</span>
+      Produto não encontrado!
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+      <img src="logo.png" alt="Mercadinho Supapo" class="footer-logo">
+      <p>Sistema desenvolvido por Gabriel Ricardo - 2025</p>
+    </footer>
+  </div>
+
+  <script>
+    let products = [];
+    let priceHistory = JSON.parse(localStorage.getItem('priceHistory')) || {};
+    let inactivityTimer;
+    let lastFileModified = null;
+
+    function updateCurrentTime() {
+      const now = new Date();
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      const formattedTime = new Intl.DateTimeFormat('pt-BR', options).format(now);
+      document.getElementById('currentTime').textContent = `🕒 Hoje: ${formattedTime}`;
+    }
+    setInterval(updateCurrentTime, 1000);
+    updateCurrentTime();
+
+    async function loadWeather() {
+      const apiKey = 'a9376a3c2a15357440f2873b59e20a8b';
+      const city = 'Escada,BR';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=pt`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Erro ao obter dados do tempo');
         }
-        setInterval(updateCurrentTime, 1000);
-        updateCurrentTime();
-
-        async function loadWeather() {
-            const apiKey = 'a9376a3c2a15357440f2873b59e20a8b';
-            const city = 'Escada,BR';
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=pt`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Erro ao obter dados do tempo');
-                }
-                const data = await response.json();
-                const temperature = data.main.temp.toFixed(1);
-                const weatherMain = data.weather[0].main.toLowerCase();
-                const description = data.weather[0].description;
-                const rainForecast = weatherMain.includes('rain') ? 'Vai chover' : 'Sem chuva';
-                let weatherEmoji = '☀️';
-                if (weatherMain.includes('rain')) {
-                    weatherEmoji = '🌧️';
-                } else if (weatherMain.includes('cloud')) {
-                    weatherEmoji = '☁️';
-                }
-                document.getElementById('weather').textContent = `${weatherEmoji} Tempo em Escada - BR: ${temperature}°C, ${rainForecast} (${description}).`;
-            } catch (error) {
-                console.error(error);
-                document.getElementById('weather').textContent = '⚠️ Não foi possível carregar os dados do tempo.';
-            }
+        const data = await response.json();
+        const temperature = data.main.temp.toFixed(1);
+        const weatherMain = data.weather[0].main.toLowerCase();
+        const description = data.weather[0].description;
+        const rainForecast = weatherMain.includes('rain') ? 'Vai chover' : 'Sem chuva';
+        let weatherEmoji = '☀️';
+        if (weatherMain.includes('rain')) {
+          weatherEmoji = '🌧️';
+        } else if (weatherMain.includes('cloud')) {
+          weatherEmoji = '☁️';
         }
-        loadWeather();
-        setInterval(loadWeather, 300000);
+        document.getElementById('weather').textContent = `${weatherEmoji} Tempo em Escada - BR: ${temperature}°C, ${rainForecast} (${description}).`;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('weather').textContent = '⚠️ Não foi possível carregar os dados do tempo.';
+      }
+    }
+    loadWeather();
+    setInterval(loadWeather, 300000);
 
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(showRandomProduct, 30000);
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(showRandomProduct, 30000);
+    }
+
+    async function loadProducts() {
+      try {
+        // Adiciona um parâmetro para evitar cache
+        const response = await fetch('Produtos.txt?t=' + new Date().getTime(), { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Arquivo não encontrado (${response.status})`);
+
+        const lastModified = response.headers.get('last-modified');
+        if (lastModified) lastFileModified = lastModified;
+        const updateDate = lastModified ? new Date(lastModified) : new Date();
+        const now = new Date();
+        const hoursDiff = Math.abs(now - updateDate) / 36e5;
+        let updateClass = 'update-old';
+        if (hoursDiff < 1) updateClass = 'update-recent';
+        else if (hoursDiff < 24) updateClass = 'update-medium';
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        let lastUpdate = new Intl.DateTimeFormat('pt-BR', options).format(updateDate)
+          .replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}:\d{2})/, '$1/$2/$3 $4');
+        document.getElementById('lastUpdate').innerHTML = `<span class="${updateClass}">Última atualização: ${lastUpdate}</span>`;
+
+        const data = await response.text();
+        const lines = data.split('\n').filter(line => line.trim() !== '');
+        if (lines.length < 2) throw new Error('Arquivo vazio ou formato inválido');
+        products = lines.slice(1).map((line, index) => {
+          const parts = line.split(',').map(item => item.trim());
+          if (parts.length !== 3) throw new Error(`Linha ${index + 2} inválida: ${line}`);
+          const [code, name, price] = parts;
+          const priceNumber = parseFloat(price);
+          if (isNaN(priceNumber)) throw new Error(`Preço inválido na linha ${index + 2}: ${price}`);
+          const previousPrice = priceHistory[code]?.price;
+          if (previousPrice !== undefined && previousPrice > priceNumber) {
+            const historyEntry = { oldPrice: previousPrice, newPrice: priceNumber, date: new Date().toISOString() };
+            priceHistory[code] = { ...priceHistory[code], price: priceNumber, history: [...(priceHistory[code].history || []), historyEntry] };
+          } else if (!priceHistory[code]) {
+            priceHistory[code] = { price: priceNumber, history: [], name: name };
+          }
+          return {
+            code,
+            name,
+            price: priceNumber,
+            unit: determineUnit(code, name)
+          };
+        });
+        localStorage.setItem('priceHistory', JSON.stringify(priceHistory));
+        document.getElementById('loading').style.display = 'none';
+        console.log(`${products.length} produtos carregados com sucesso!`);
+        resetInactivityTimer();
+      } catch (error) {
+        console.error('Erro:', error);
+        document.getElementById('loading').innerHTML = `<span style="color: #c53030;">Erro: ${error.message}</span>`;
+        document.getElementById('lastUpdate').innerHTML = `<span style="color: #c53030;">Erro ao obter data de atualização</span>`;
+      }
+    }
+
+    function determineUnit(code, name) {
+      const nameUpper = name.toUpperCase();
+      if (nameUpper.includes('KG') || nameUpper.includes('KILO')) return 'KG';
+      if (nameUpper.includes('UN') || nameUpper.includes('UND')) return 'UN';
+      const codeDigits = code.replace(/\D/g, '');
+      return codeDigits.length <= 5 ? 'KG' : 'UN';
+    }
+
+    function showRandomProduct() {
+      if (products.length === 0) return;
+      const reducedProducts = products.filter(p => priceHistory[p.code]?.history?.some(h => h.newPrice < h.oldPrice));
+      const otherProducts = products.filter(p => !priceHistory[p.code]?.history?.some(h => h.newPrice < h.oldPrice));
+      const productPool = [...reducedProducts, ...reducedProducts, ...otherProducts];
+      const randomProduct = productPool[Math.floor(Math.random() * productPool.length)];
+      const card = document.createElement("div");
+      card.classList.add("result", "random-product");
+      const history = priceHistory[randomProduct.code]?.history || [];
+      let historyHtml = "";
+      if (history.length > 0) {
+        const lastReduction = history[history.length - 1];
+        if (lastReduction.newPrice < lastReduction.oldPrice) {
+          const reduction = lastReduction.oldPrice - lastReduction.newPrice;
+          const reductionPercentage = ((reduction / lastReduction.oldPrice) * 100).toFixed(1);
+          historyHtml = `
+            <div class="price-reduction">
+              <span class="old-price">R$ ${lastReduction.oldPrice.toFixed(2)}</span>
+              <span>↓ ${reductionPercentage}%</span>
+              <span>(${new Date(lastReduction.date).toLocaleDateString('pt-BR')})</span>
+            </div>
+          `;
         }
+      }
+      card.innerHTML = `
+        <div class="product-title">${randomProduct.name}</div>
+        <div class="price-container">
+          <div class="price">${randomProduct.price.toFixed(2)}<span class="unit">${randomProduct.unit}</span></div>
+          <div class="price-history">${historyHtml}</div>
+        </div>
+      `;
+      const randomResults = document.getElementById("randomResults");
+      randomResults.replaceChildren(card);
+      resetInactivityTimer();
+    }
 
-        async function loadProducts() {
-            try {
-                const response = await fetch('Produtos.txt');
-                if (!response.ok) throw new Error(`Arquivo não encontrado (${response.status})`);
-
-                const lastModified = response.headers.get('last-modified');
-                if (lastModified) lastFileModified = lastModified;
-                const updateDate = lastModified ? new Date(lastModified) : new Date();
-                const now = new Date();
-                const hoursDiff = Math.abs(now - updateDate) / 36e5;
-                let updateClass = 'update-old';
-                if (hoursDiff < 1) updateClass = 'update-recent';
-                else if (hoursDiff < 24) updateClass = 'update-medium';
-                const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-                let lastUpdate = new Intl.DateTimeFormat('pt-BR', options).format(updateDate)
-                    .replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}:\d{2})/, '$1/$2/$3 $4');
-                document.getElementById('lastUpdate').innerHTML = `<span class="${updateClass}">Última atualização: ${lastUpdate}</span>`;
-
-                const data = await response.text();
-                const lines = data.split('\n').filter(line => line.trim() !== '');
-                if (lines.length < 2) throw new Error('Arquivo vazio ou formato inválido');
-                products = lines.slice(1).map((line, index) => {
-                    const parts = line.split(',').map(item => item.trim());
-                    if (parts.length !== 3) throw new Error(`Linha ${index + 2} inválida: ${line}`);
-                    const [code, name, price] = parts;
-                    const priceNumber = parseFloat(price);
-                    if (isNaN(priceNumber)) throw new Error(`Preço inválido na linha ${index + 2}: ${price}`);
-                    const previousPrice = priceHistory[code]?.price;
-                    if (previousPrice !== undefined && previousPrice > priceNumber) {
-                        const historyEntry = { oldPrice: previousPrice, newPrice: priceNumber, date: new Date().toISOString() };
-                        priceHistory[code] = { ...priceHistory[code], price: priceNumber, history: [...(priceHistory[code].history || []), historyEntry] };
-                    } else if (!priceHistory[code]) {
-                        priceHistory[code] = { price: priceNumber, history: [], name: name };
-                    }
-                    return {
-                        code,
-                        name,
-                        price: priceNumber,
-                        unit: determineUnit(code, name)
-                    };
-                });
-                localStorage.setItem('priceHistory', JSON.stringify(priceHistory));
-                document.getElementById('loading').style.display = 'none';
-                console.log(`${products.length} produtos carregados com sucesso!`);
-                resetInactivityTimer();
-            } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('loading').innerHTML = `<span style="color: #c53030;">Erro: ${error.message}</span>`;
-                document.getElementById('lastUpdate').innerHTML = `<span style="color: #c53030;">Erro ao obter data de atualização</span>`;
-            }
-        }
-
-        function determineUnit(code, name) {
-            const nameUpper = name.toUpperCase();
-            if (nameUpper.includes('KG') || nameUpper.includes('KILO')) return 'KG';
-            if (nameUpper.includes('UN') || nameUpper.includes('UND')) return 'UN';
-            const codeDigits = code.replace(/\D/g, '');
-            return codeDigits.length <= 5 ? 'KG' : 'UN';
-        }
-
-        function showRandomProduct() {
-            if (products.length === 0) return;
-            const reducedProducts = products.filter(p => priceHistory[p.code]?.history?.some(h => h.newPrice < h.oldPrice));
-            const otherProducts = products.filter(p => !priceHistory[p.code]?.history?.some(h => h.newPrice < h.oldPrice));
-            const productPool = [...reducedProducts, ...reducedProducts, ...otherProducts];
-            const randomProduct = productPool[Math.floor(Math.random() * productPool.length)];
-            const card = document.createElement("div");
-            card.classList.add("result", "random-product");
-            const history = priceHistory[randomProduct.code]?.history || [];
-            let historyHtml = "";
-            if (history.length > 0) {
-                const lastReduction = history[history.length - 1];
-                if (lastReduction.newPrice < lastReduction.oldPrice) {
-                    const reduction = lastReduction.oldPrice - lastReduction.newPrice;
-                    const reductionPercentage = ((reduction / lastReduction.oldPrice) * 100).toFixed(1);
-                    historyHtml = `
-                        <div class="price-reduction">
-                            <span class="old-price">R$ ${lastReduction.oldPrice.toFixed(2)}</span>
-                            <span>↓ ${reductionPercentage}%</span>
-                            <span>(${new Date(lastReduction.date).toLocaleDateString('pt-BR')})</span>
-                        </div>
-                    `;
-                }
-            }
-            card.innerHTML = `
-                <div class="product-title">${randomProduct.name}</div>
-                <div class="price-container">
-                    <div class="price">${randomProduct.price.toFixed(2)}<span class="unit">${randomProduct.unit}</span></div>
-                    <div class="price-history">${historyHtml}</div>
-                </div>
+    function searchProduct() {
+      clearTimeout(inactivityTimer);
+      resetInactivityTimer();
+      document.getElementById("randomResults").innerHTML = "";
+      const searchInput = document.getElementById('searchInput');
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const resultDiv = document.getElementById('result');
+      const errorDiv = document.getElementById('error');
+      const historyDiv = document.getElementById('priceHistory');
+      if (!searchTerm) {
+        resultDiv.style.display = 'none';
+        return;
+      }
+      const foundProduct = products.find(product => product.code.toLowerCase() === searchTerm || product.name.toLowerCase().includes(searchTerm));
+      if (foundProduct) {
+        resultDiv.classList.remove('random-product');
+        document.getElementById('productName').textContent = foundProduct.name;
+        document.getElementById('productPrice').firstChild.textContent = foundProduct.price.toFixed(2);
+        document.getElementById('productUnit').textContent = foundProduct.unit;
+        const history = priceHistory[foundProduct.code]?.history || [];
+        historyDiv.innerHTML = '';
+        if (history.length > 0) {
+          const lastReduction = history[history.length - 1];
+          if (lastReduction.newPrice < lastReduction.oldPrice) {
+            const reduction = lastReduction.oldPrice - lastReduction.newPrice;
+            const reductionPercentage = ((reduction / lastReduction.oldPrice) * 100).toFixed(1);
+            historyDiv.innerHTML = `
+              <div class="price-reduction">
+                <span class="old-price">R$ ${lastReduction.oldPrice.toFixed(2)}</span>
+                <span>↓ ${reductionPercentage}%</span>
+                <span>(${new Date(lastReduction.date).toLocaleDateString('pt-BR')})</span>
+              </div>
             `;
-            const randomResults = document.getElementById("randomResults");
-            randomResults.replaceChildren(card);
-            resetInactivityTimer();
+          }
         }
+        resultDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+      } else {
+        resultDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+      }
+      searchInput.value = "";
+    }
 
-        function searchProduct() {
-            clearTimeout(inactivityTimer);
-            resetInactivityTimer();
-            document.getElementById("randomResults").innerHTML = "";
-            const searchInput = document.getElementById('searchInput');
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const resultDiv = document.getElementById('result');
-            const errorDiv = document.getElementById('error');
-            const historyDiv = document.getElementById('priceHistory');
-            if (!searchTerm) {
-                resultDiv.style.display = 'none';
-                return;
+    // Verifica se o arquivo Produtos.txt foi modificado e, se sim, recarrega a página
+    function checkForFileUpdate() {
+      fetch('Produtos.txt?t=' + new Date().getTime(), { method: 'HEAD', cache: 'no-store' })
+        .then(response => {
+          if (response.ok) {
+            const newModified = response.headers.get('last-modified');
+            if (lastFileModified && newModified && newModified !== lastFileModified) {
+              console.log("Produtos.txt modificado, atualizando a página...");
+              // Recarrega a página com um parâmetro para evitar cache
+              window.location.href = window.location.href.split('?')[0] + '?_=' + new Date().getTime();
             }
-            const foundProduct = products.find(product => product.code.toLowerCase() === searchTerm || product.name.toLowerCase().includes(searchTerm));
-            if (foundProduct) {
-                resultDiv.classList.remove('random-product');
-                document.getElementById('productName').textContent = foundProduct.name;
-                document.getElementById('productPrice').firstChild.textContent = foundProduct.price.toFixed(2);
-                document.getElementById('productUnit').textContent = foundProduct.unit;
-                const history = priceHistory[foundProduct.code]?.history || [];
-                historyDiv.innerHTML = '';
-                if (history.length > 0) {
-                    const lastReduction = history[history.length - 1];
-                    if (lastReduction.newPrice < lastReduction.oldPrice) {
-                        const reduction = lastReduction.oldPrice - lastReduction.newPrice;
-                        const reductionPercentage = ((reduction / lastReduction.oldPrice) * 100).toFixed(1);
-                        historyDiv.innerHTML = `
-                            <div class="price-reduction">
-                                <span class="old-price">R$ ${lastReduction.oldPrice.toFixed(2)}</span>
-                                <span>↓ ${reductionPercentage}%</span>
-                                <span>(${new Date(lastReduction.date).toLocaleDateString('pt-BR')})</span>
-                            </div>
-                        `;
-                    }
-                }
-                resultDiv.style.display = 'block';
-                errorDiv.style.display = 'none';
-            } else {
-                resultDiv.style.display = 'none';
-                errorDiv.style.display = 'block';
-            }
-            searchInput.value = "";
-        }
-
-        function checkForFileUpdate() {
-            fetch('Produtos.txt', { method: 'HEAD' })
-                .then(response => {
-                    if (response.ok) {
-                        const newModified = response.headers.get('last-modified');
-                        if (lastFileModified && newModified && newModified !== lastFileModified) {
-                            console.log("Produtos.txt modificado, atualizando produtos...");
-                            loadProducts();
-                        }
-                        lastFileModified = newModified;
-                    }
-                })
-                .catch(error => {
-                    console.error("Erro ao verificar atualização do arquivo:", error);
-                });
-        }
-        setInterval(checkForFileUpdate, 30000);
-
-        document.addEventListener('mousemove', resetInactivityTimer);
-        document.addEventListener('keydown', resetInactivityTimer);
-        document.addEventListener('click', resetInactivityTimer);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('searchInput').focus();
-            if (isMobile()) {
-                document.getElementById('scanButton').style.display = 'block';
-            }
+            lastFileModified = newModified;
+          }
+        })
+        .catch(error => {
+          console.error("Erro ao verificar atualização do arquivo:", error);
         });
+    }
+    // Checa a cada 5 segundos para uma atualização mais rápida
+    setInterval(checkForFileUpdate, 5000);
 
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') searchProduct();
-        });
-
-        document.getElementById('scanButton').addEventListener('click', function() {
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#result')
-                },
-                decoder: {
-                    readers: ["ean_reader"]
-                }
-            }, function(err) {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                Quagga.start();
-            });
-
-            Quagga.onDetected(function(data) {
-                const code = data.codeResult.code;
-                document.getElementById('searchInput').value = code;
-                Quagga.stop();
-                searchProduct();
-            });
-        });
-
-        function isMobile() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        window.onload = loadProducts;
-    </script>
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keydown', resetInactivityTimer);
+    document.addEventListener('click', resetInactivityTimer);
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('searchInput').focus();
+    });
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchProduct();
+    });
+    window.onload = loadProducts;
+  </script>
 </body>
 </html>
