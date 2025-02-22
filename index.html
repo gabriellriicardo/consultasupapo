@@ -17,381 +17,173 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+    <!-- QuaggaJS -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+
     <style>
-        * {
+        body {
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #f4f4f4;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            width: 100%;
             max-width: 800px;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(10px);
-            position: relative;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        /* Cabeçalho */
         .header {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .branding {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
             justify-content: center;
+            margin-bottom: 20px;
         }
 
         .logo {
-            height: 80px;
-            width: auto;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
         }
 
-        .title-container {
-            flex: 1;
-            max-width: 400px;
-        }
-
-        h1 {
-            color: #2d3748;
-            font-size: 2.2rem;
-            position: relative;
+        .title-container h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #333;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
         }
 
-        .subtitle {
-            color: #4a5568;
-            font-size: 1.2rem;
-            margin-top: 0.5rem;
+        .title-container .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
         }
 
-        h1::after {
-            content: "";
-            width: 60px;
-            height: 4px;
-            background: #4a5568;
-            display: block;
-            position: absolute;
-            bottom: -10px;
-            border-radius: 2px;
-        }
-
-        .update-info {
+        .update-info, .current-time, .weather-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
             text-align: center;
-            margin: 1.5rem 0;
-            font-size: 0.9rem;
         }
 
-        .update-info span {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            border: 1px solid;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .update-recent {
-            background: #f0fff4;
-            border-color: #38a169;
-            color: #2f855a;
-            animation: pulse-green 2s infinite;
-        }
-
-        .update-medium {
-            background: #fff9e6;
-            border-color: #ecc94b;
-            color: #b7791f;
-            animation: pulse-yellow 2s infinite;
-        }
-
-        .update-old {
-            background: #fff5f5;
-            border-color: #fc8181;
-            color: #c53030;
-            animation: pulse-red 2s infinite;
-        }
-
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.3); }
-            70% { box-shadow: 0 0 0 10px rgba(56, 161, 105, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); }
-        }
-
-        @keyframes pulse-yellow {
-            0% { box-shadow: 0 0 0 0 rgba(236, 201, 75, 0.3); }
-            70% { box-shadow: 0 0 0 10px rgba(236, 201, 75, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(236, 201, 75, 0); }
-        }
-
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(252, 129, 129, 0.3); }
-            70% { box-shadow: 0 0 0 10px rgba(252, 129, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(252, 129, 129, 0); }
-        }
+        .update-recent { color: #28a745; }
+        .update-medium { color: #ffc107; }
+        .update-old { color: #dc3545; }
 
         .search-box {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        input[type="text"] {
+        .search-box input {
             flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f7fafc;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        button {
+        .search-box button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            gap: 5px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        .search-box button:hover {
+            background-color: #0056b3;
+        }
+
+        #scanButton {
+            background-color: #28a745;
+        }
+
+        #scanButton:hover {
+            background-color: #218838;
         }
 
         .result {
-            text-align: center;
-            padding: 3rem;
-            background: #f7fafc;
-            border-radius: 15px;
-            margin-top: 1.5rem;
-            animation: fadeIn 0.5s ease;
-            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: none;
         }
 
         .random-product {
-            animation: slideIn 1s ease;
+            background-color: #e9ecef;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
         }
 
         .price-container {
-            position: relative;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
         }
 
         .price {
-            font-size: 6.5rem;
-            color: #2f855a;
-            font-weight: 700;
-            margin: 2rem 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            padding-bottom: 3rem;
+            font-size: 24px;
+            color: #28a745;
         }
 
-        .price::before {
-            content: "R$";
-            font-size: 2rem;
-            color: #718096;
-            position: absolute;
-            left: -3.5rem;
-            top: 1.5rem;
-        }
-
-        .unit {
-            position: absolute;
-            right: 1rem;
-            bottom: 1rem;
-            font-size: 1.2rem;
-            color: #718096;
-            font-weight: 400;
+        .price .unit {
+            font-size: 14px;
+            color: #666;
+            margin-left: 5px;
         }
 
         .price-history {
-            margin-top: 1rem;
-            font-size: 1.1rem;
-            color: #4a5568;
+            font-size: 14px;
+            color: #666;
         }
 
-        .old-price {
+        .price-reduction .old-price {
             text-decoration: line-through;
-            color: #e74c3c;
-            margin-right: 0.5rem;
+            color: #dc3545;
+            margin-right: 10px;
         }
 
-        .price-reduction {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            color: #2ecc71;
+        .loading, .error {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            display: none;
         }
 
         .error {
             color: #c53030;
-            text-align: center;
-            margin-top: 1.5rem;
-            display: none;
-            animation: shake 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .loading {
-            text-align: center;
-            margin: 2rem 0;
-            color: #4a5568;
-        }
-
-        .material-icons {
-            vertical-align: middle;
-        }
-
-        .product-title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        .current-time {
-            text-align: center;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        .weather-info {
-            text-align: center;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        /* Rodapé */
         .footer {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 2px solid #e2e8f0;
             text-align: center;
-            font-size: 0.9rem;
-            color: #718096;
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
         }
 
         .footer-logo {
+            width: 40px;
             height: 40px;
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-
-            .branding {
-                flex-direction: column;
-            }
-
-            .logo {
-                height: 60px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            button {
-                justify-content: center;
-            }
-
-            .price {
-                font-size: 4rem;
-                padding-bottom: 2rem;
-            }
-
-            .price::before {
-                left: -2rem;
-                top: 0.8rem;
-                font-size: 1.5rem;
-            }
-
-            .unit {
-                font-size: 1rem;
-                right: 0.5rem;
-                bottom: 0.5rem;
-            }
-
-            .update-info {
-                font-size: 0.8rem;
-                margin: 1rem 0;
-            }
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -424,7 +216,10 @@
                 <span class="material-icons">search</span>
                 Consultar
             </button>
+            <button id="scanButton" style="display: none;">Ler Código de Barras</button>
         </div>
+
+        <div id="result"></div>
 
         <div id="randomResults"></div>
 
@@ -451,7 +246,6 @@
     </div>
 
     <script>
-        // JavaScript permanece exatamente igual à versão anterior
         let products = [];
         let priceHistory = JSON.parse(localStorage.getItem('priceHistory')) || {};
         let inactivityTimer;
@@ -662,12 +456,48 @@
         document.addEventListener('mousemove', resetInactivityTimer);
         document.addEventListener('keydown', resetInactivityTimer);
         document.addEventListener('click', resetInactivityTimer);
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('searchInput').focus();
+            if (isMobile()) {
+                document.getElementById('scanButton').style.display = 'block';
+            }
         });
+
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') searchProduct();
         });
+
+        document.getElementById('scanButton').addEventListener('click', function() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#result')
+                },
+                decoder: {
+                    readers: ["ean_reader"]
+                }
+            }, function(err) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(data) {
+                const code = data.codeResult.code;
+                document.getElementById('searchInput').value = code;
+                Quagga.stop();
+                searchProduct();
+            });
+        });
+
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
         window.onload = loadProducts;
     </script>
 </body>
